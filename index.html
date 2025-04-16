@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>五十音練習 - 修正版</title>
+  <style>
+    body { font-family: sans-serif; background: #f9f9f9; padding: 20px; text-align: center; }
+    canvas { border: 1px solid #ccc; background: white; }
+    button { margin: 10px; padding: 10px 20px; font-size: 1em; }
+  </style>
+</head>
+<body>
+  <h1>五十音手寫練習 - 修正版</h1>
+  <button onclick="initVoice()">啟動語音</button>
+  <button onclick="play()">播放假名</button>
+  <br>
+  <canvas id="canvas" width="300" height="300"></canvas>
+  <br>
+  <button onclick="clearCanvas()">清除</button>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    let drawing = false;
+    let speechReady = false;
+
+    canvas.addEventListener('touchstart', e => {
+      e.preventDefault();
+      drawing = true;
+      const t = e.touches[0];
+      ctx.beginPath();
+      ctx.moveTo(t.clientX - canvas.offsetLeft, t.clientY - canvas.offsetTop);
+    });
+    canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      if (!drawing) return;
+      const t = e.touches[0];
+      ctx.lineTo(t.clientX - canvas.offsetLeft, t.clientY - canvas.offsetTop);
+      ctx.stroke();
+    });
+    canvas.addEventListener('touchend', e => {
+      e.preventDefault();
+      drawing = false;
+    });
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function initVoice() {
+      try {
+        const u = new SpeechSynthesisUtterance("テスト");
+        u.lang = "ja-JP";
+        speechSynthesis.speak(u);
+        speechReady = true;
+        alert("語音功能已啟用！");
+      } catch (e) {
+        alert("無法啟動語音功能");
+      }
+    }
+
+    function play() {
+      if (!speechReady) {
+        alert("請先撳「啟動語音」");
+        return;
+      }
+      const u = new SpeechSynthesisUtterance("あ");
+      u.lang = "ja-JP";
+      speechSynthesis.speak(u);
+    }
+  </script>
+</body>
+</html>
